@@ -29,19 +29,25 @@ public class WikiPhilosophy {
 	 */
 	public static void main(String[] args) throws IOException {
 
+		/*List of visited urls beginning with starting urls*/
+
 		List<String> urls = new ArrayList<String>();
 		String current_url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
 		urls.add(current_url);
+	
+		boolean success = false;
+		/*Looping until reaching Philosophy Page or failure*/
 
 		while(!current_url.equals("")){
 
 			//checks if url is Wiki Philosophy page
 			if(current_url.equals("https://en.wikipedia.org/wiki/Philosophy")) {
 				System.out.println("Success");
+				
 				break;
 			}
 
-			Elements paragraphs = wf.fetchWikipedia(url);
+			Elements paragraphs = wf.fetchWikipedia(current_url);
 			Element firstPara = paragraphs.get(0);
 
 			int parenthesisCounter = 0;
@@ -50,30 +56,30 @@ public class WikiPhilosophy {
 
 			for (Node node: iter) {
 				if(node instanceof TextNode){
-						if(node.toString().contains("("))
-							parenthesisCounter++;
-						else if(node.toString().contains(")"))
-							parenthesisCounter--;
+					if(node.toString().contains("("))
+						parenthesisCounter++;
+					else if(node.toString().contains(")"))
+						parenthesisCounter--;
 				}
 				if(!node.attr("href").equals("") && parenthesisCounter == 0){
-					if(urls.contains(node.attr("abs:href")){
-						url="";
+					if(urls.contains(node.attr("abs:href"))){
+						current_url="";
 					}
 					else {
 						urls.add(node.attr("abs:href"));
-						url = node.attr("abs:href");
+						current_url = node.attr("abs:href");
 						break;
 					}
 				}
-	    }
-			if(url.equals(""))
+			
+			 }
+			if(current_url.equals(""))
 				System.out.println("Failure");
 		}
 
 		for(String s: urls){
 			System.out.println(s);
 		}
-
 
 	}
 }
